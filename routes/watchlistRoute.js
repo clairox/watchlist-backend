@@ -12,7 +12,6 @@ router.get('/', (req, res) => {
 
 	WL.getWatchlists(userId)
 		.then(data => {
-			return res.status(200).json(data.rows)
 			if (!data.rows.length) {
 				return res.status(404).json();
 			} else {
