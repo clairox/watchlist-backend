@@ -8,13 +8,12 @@ const router = require('express').Router();
 
 //TODO: replace favicon.ico
 router.get('/', (req, res) => {
-	console.log(req.session)
 	const userId = req.session.passport?.user;
 
 	WL.getWatchlists(userId)
 		.then(data => {
 			if (!data.rows.length) {
-				return res.status(404).json();
+				return res.status(200).json();
 			} else {
 				return res.status(200).json(data.rows);
 			}
