@@ -8,6 +8,7 @@ const router = require('express').Router();
 
 //TODO: replace favicon.ico
 router.get('/', (req, res) => {
+	console.log(req.session)
 	const userId = req.session.passport?.user;
 
 	WL.getWatchlists(userId)
