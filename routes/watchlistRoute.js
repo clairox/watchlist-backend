@@ -7,13 +7,13 @@ const router = require('express').Router();
 // 23503: foreign key violation
 
 //TODO: replace favicon.ico
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
 	const userId = req.session.passport?.user;
 
-	WL.getWatchlists(userId)
+	await WL.getWatchlists(userId)
 		.then(data => {
 			if (!data.rows.length) {
-				return res.status(200).json();
+				return res.status(404).json();
 			} else {
 				return res.status(200).json(data.rows);
 			}
