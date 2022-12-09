@@ -49,8 +49,8 @@ app.use(
 		saveUninitialized: false,
 		cookie: {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
-			secure: false,
-			sameSite: 'none',
+			secure: true,
+			sameSite: 'lax',
 		},
 		store: new pgSession({
 			//TODO: when deleting session cookie in browser, cookie stays in store. idk what to do lol
