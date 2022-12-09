@@ -14,7 +14,7 @@ const app = express();
 const port = process.env.PORT || 8080;
 
 const corsOptions = {
-	origin: 'https://powerful-dawn-27827.herokuapp.com/',
+	origin: process.env.SITEURL,
 	credentials: true,
 };
 
@@ -24,7 +24,7 @@ app.use(cors(corsOptions));
 app.use((req, res, next) => {
 	res.setHeader(
 		"Access-Control-Allow-Origin",
-		'https://powerful-dawn-27827.herokuapp.com/'
+		process.env.SITEURL
 	);
 	res.setHeader(
 		"Access-Control-Allow-Methods",
