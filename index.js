@@ -13,7 +13,6 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 8080;
 
-//TODO: change origin or something
 const corsOptions = {
 	origin: process.env.SITEURL,
 	credentials: true,
