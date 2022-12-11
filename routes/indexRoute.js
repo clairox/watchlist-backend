@@ -19,7 +19,7 @@ router.post("/login", passport.authenticate("local-login"), (req, res) => {
 
 router.post("/logout", (req, res) => {
 	req.logout(() => {
-		req.session.destroy((err) => {
+		req.session.destroy(() => {
 			return res
 				.clearCookie("connect.sid", { path: "/" })
 				.status(200)
