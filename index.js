@@ -13,9 +13,8 @@ require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 8080;
 
-//TODO: change origin or something
 const corsOptions = {
-	origin: `http://${process.env.ADDRESS}:3000`,
+	origin: process.env.SITEURL,
 	credentials: true,
 };
 
@@ -25,7 +24,7 @@ app.use(cors(corsOptions));
 app.use((req, res, next) => {
 	res.setHeader(
 		"Access-Control-Allow-Origin",
-		`http://${process.env.ADDRESS}:3000`
+		process.env.SITEURL
 	);
 	res.setHeader(
 		"Access-Control-Allow-Methods",

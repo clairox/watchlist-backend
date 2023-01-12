@@ -7,35 +7,67 @@ const router = require('express').Router();
 // 23503: foreign key violation
 
 //TODO: replace favicon.ico
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
 	const userId = req.session.passport?.user;
+	const { populated, limit } = req.query
 
-	WL.getWatchlists(userId)
+	const r1 = await WL.getWatchlists(userId)
 		.then(data => {
-			if (!data.rows.length) {
-				return res.status(404).json();
-			} else {
-				return res.status(200).json(data.rows);
-			}
+			return { data }
 		})
 		.catch(err => {
-			switch (err.code) {
-				case '23503':
-					return res.status(401).json();
-				default:
-					return res.status(500).json();
-			}
+			return { err }
 		});
+
+	if (r1.err) {
+		switch (r1.err.code) {
+			case '23503':
+				return res.status(401).json();
+			default:
+				console.log(r1.err.code)
+				return res.status(500).json();
+		}
+	}
+
+	const watchlists = r1.data.rows
+
+	if (populated === 'true') {
+		for (let i = 0; i < watchlists.length; i++) {
+			const r2 = await WL.getWatchlistItems(watchlists[i].id, limit)
+				.then(data => {
+					return { data };
+				})
+				.catch(err => {
+					return { err }
+					
+				});
+
+			if (r2.err) {
+				switch (err.code) {
+					case '22P02':
+						return res.status(400).json();
+					default:
+						return res.status(500).json();
+				}
+			} 
+
+			watchlists[i].items = r2.data.rows;
+		}
+	}
+	return res.status(200).json(r1.data.rows)
 });
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
 	const userId = req.session.passport?.user;
+	const { name, isDefault } = req.body;
 
-	WL.createWatchlist(userId, 'New watchlist', false)
-		.then(data => {
-			return res.status(200).json(data.rows[0]);
+	WL.createWatchlist(userId, name || 'New watchlist', isDefault || false)
+		.then(async data => {
+			const l = await WL.getOneWatchlistWithItems(userId, data.rows[0].id).then(data => data.rows[0])
+			return res.status(200).json(l);
 		})
 		.catch(err => {
+			console.log(err.code)
 			switch (err.code) {
 				case '22P02':
 					return res.status(400).json();
@@ -147,6 +179,8 @@ router.patch('/:watchlistId/name', (req, res) => {
 	const { watchlistId } = req.params;
 	const { name } = req.body;
 
+	if (!name) return res.status(400).json();
+
 	WL.setWatchlistName(userId, watchlistId, name)
 		.then(data => {
 			return res.status(200).json(data.rows[0].name);
@@ -162,6 +196,21 @@ router.patch('/:watchlistId/name', (req, res) => {
 			}
 		});
 });
+
+router.patch('/:watchlistId/default', (req, res) => {
+	const userId = req.session.passport?.user;
+	const { watchlistId } = req.params;
+	const { isDefault } = req.body;
+
+	WL.setIsDefaultWatchlist(userId, watchlistId, isDefault)
+		.then(async data => {
+			const l = await WL.getOneWatchlistWithItems(userId, data.rows[0].id).then(data => data.rows[0])
+			return res.status(200).json(l);
+		})
+		.catch(() => {
+			return res.status(500).json()
+		})
+})
 
 router.delete('/:watchlistId', (req, res) => {
 	const userId = req.session.passport?.user;
