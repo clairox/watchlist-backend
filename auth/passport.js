@@ -35,11 +35,6 @@ passport.use(
 								const newUser = newUsers.rows[0];
 								if (err) return next(err);
 
-								pgPool.query(
-									'INSERT INTO watchlist (owner_id, name, "default") VALUES ($1, $2, true)',
-									[newUser.id, "My Watchlist"]
-								);
-
 								return next(null, {
 									id: newUser.id,
 									email: newUser.email,
