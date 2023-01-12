@@ -42,6 +42,7 @@ app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "../client/public")));
+app.set('trust proxy', 1)
 app.use(
 	session({
 		secret: process.env.SESSION_SECRET_KEY,
