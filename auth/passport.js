@@ -13,6 +13,7 @@ passport.use(
 			session: false,
 		},
 		(req, email, password, next) => {
+			email = email.toLowerCase()
 			pgPool.query(
 				"SELECT * FROM user_account WHERE email = $1",
 				[email],
@@ -59,6 +60,7 @@ passport.use(
 			session: false,
 		},
 		(req, email, password, next) => {
+			email = email.toLowerCase()
 			pgPool.query(
 				"SELECT * FROM user_account WHERE email = $1",
 				[email],
