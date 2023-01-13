@@ -12,6 +12,7 @@ require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 8080;
+const env = process.env.NODE_ENV;
 
 const corsOptions = {
 	origin: process.env.SITEURL,
@@ -41,8 +42,12 @@ app.use((req, res, next) => {
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "../client/public")));
-app.set('trust proxy', 1)
+app.use(express.static(path.join(__dirname, "../client/public"))); 
+
+if (env === 'production') {
+	app.set('trust proxy', 1)
+}
+
 app.use(
 	session({
 		secret: process.env.SESSION_SECRET_KEY,
@@ -50,8 +55,8 @@ app.use(
 		saveUninitialized: false,
 		cookie: {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
-			secure: true,
-			sameSite: 'none'
+			secure: env === 'production' ? true : false,
+			sameSite: env === 'productsion' ? 'none' : false
 		},
 		store: new pgSession({
 			//TODO: when deleting session cookie in browser, cookie stays in store. idk what to do lol
