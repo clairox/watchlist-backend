@@ -56,7 +56,7 @@ app.use(
 		cookie: {
 			maxAge: 30 * 24 * 60 * 60 * 1000,
 			secure: env === 'production' ? true : false,
-			sameSite: env === 'productsion' ? 'none' : false
+			sameSite: env === 'production' ? 'none' : false
 		},
 		store: new pgSession({
 			//TODO: when deleting session cookie in browser, cookie stays in store. idk what to do lol
