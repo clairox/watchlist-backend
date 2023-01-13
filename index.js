@@ -12,7 +12,10 @@ require("dotenv").config();
 
 const app = express();
 const port = process.env.PORT || 8080;
-const env = process.env.NODE_ENV;
+
+// cookies dont seem to work the same in development vs production
+// this is used to make sure code runs properly in either mode
+const env = process.env.NODE_ENV; 
 
 const corsOptions = {
 	origin: process.env.SITEURL,
